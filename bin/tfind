@@ -70,8 +70,10 @@ use App::tfind;
 
 my ( $opt, $usage ) = describe_options(
     '%c %o <path> [<dir>+]',
-    [ 'all|a'  => 'include hidden files and directories' ],
-    [ 'perl|p' => 'include all the @INC directories' ],
+    [ 'case-insensitive|i' => 'match case insensitively' ],
+    [ 'one-based|o'        => 'use one-based (xml-style) index predicates' ],
+    [ 'all|a'              => 'include hidden files and directories' ],
+    [ 'perl|p'             => 'include all the @INC directories' ],
     [],
     [ 'help|h|?'  => 'print usage information' ],
     [ 'version|v' => 'print program version' ]
@@ -85,11 +87,14 @@ pod2usage(
   if $opt->help;
 say("tpath version $App::tfind::VERSION"), exit if $opt->version;
 
-require TPath::Forester::File;
-
 my ( $path, @directories ) = @ARGV;
 error('no path expression provided') unless $path;
-my $arborist = TPath::Forester::File::tff();
+
+require TPath::Forester::File;
+
+my %args =
+  ( case_insensitive => $opt->case_insensitive, one_based => $opt->one_based );
+my $arborist = TPath::Forester::File->new(%args);
 $arborist->add_test( sub { $_[1]->name !~ /^\./ } ) unless $opt->all;
 eval { $path = $arborist->path($path) };
 error($@) if $@;

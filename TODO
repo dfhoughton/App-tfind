@@ -3,7 +3,7 @@ Key
  - = discarded
  * = completed
 
-. move executable over from TPath::Forester::File
+* move executable over from TPath::Forester::File
 
 Attic
 -----
